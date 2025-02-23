@@ -1,0 +1,26 @@
+@startuml
+actor "Менеджер проекта" as Manager
+participant "Система" as System
+participant "База данных" as DB
+participant "Сервис уведомлений" as Notifications
+actor  "Исполнитель (Член команды)" as TeamMember
+
+== Создание проекта ==
+Manager -> System : Выбирает "Создать проект"
+System --> Manager : Запрашивает данные (название, описание, цель, сроки)
+Manager -> System : Вводит данные проекта
+System -> DB : Сохраняет проект
+System -> Notifications : Уведомляет участников проекта
+Notifications -> TeamMember : Вы приглашены в проект
+
+== Создание задачи ==
+Manager -> System : Выбирает "Создать задачу"
+System -> DB : Получает список участников проекта
+DB --> System : Возвращает список участников
+System --> Manager : Отображает список участников
+Manager -> System : Выбирает исполнителя, вводит данные задачи
+System -> DB : Сохраняет задачу
+System -> Notifications : Отправляет уведомление исполнителю
+Notifications -> TeamMember : Новая задача назначена
+
+@enduml
