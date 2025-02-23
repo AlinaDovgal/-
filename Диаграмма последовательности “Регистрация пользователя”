@@ -1,0 +1,20 @@
+@startuml
+actor "Пользователь" as User
+participant "Система" as System
+participant "База данных" as DB
+participant "Email-сервис" as Email
+
+User -> System : Нажимает "Зарегистрироваться"
+System -> User : Запрашивает данные (имя, email, пароль, роль)
+User -> System : Вводит данные
+System -> Email : Отправляет письмо с подтверждением
+Email --> User : Письмо с подтверждением
+User -> System : Переходит по ссылке подтверждения
+System -> DB : Сохраняет данные пользователя
+System --> User : Регистрация завершена, вход в систему
+
+User -> System : Заполняет профиль (организация, должность и т.д.)
+System -> DB : Сохраняет профиль
+System --> User : Профиль создан
+
+@enduml
