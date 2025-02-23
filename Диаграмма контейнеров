@@ -1,0 +1,30 @@
+@startuml
+!include <C4/C4_Container>
+
+LAYOUT_TOP_DOWN()
+
+Person(manager, "Менеджер проекта", "Создаёт проекты, управляет задачами и участниками") 
+Person(team_member, "Участник команды", "Выполняет задачи, участвует в обсуждениях")
+
+System_Boundary(system, "Система управления проектами") {
+    System(system_core, "Система управления проектами", "Позволяет управлять проектами, задачами, файлами и коммуникацией")
+}
+
+System_Ext(system01, "Система уведомлений", "Регистрация и вход через Google-аккаунт")
+System_Ext(google, "Сервисы Google", "Синхронизация событий и встреч, хранение документов и файлов")
+
+
+manager -> system_core : "Создаёт и управляет проектами"
+team_member -> system_core : "Выполняет задачи, загружает файлы"
+
+system_core -> system01 : "Отправляет уведомления"
+system_core -> google : "Синхронизирует события и хранит файлы"
+system01 -> manager : "Получает уведомления"
+system01 -> team_member : "Получает уведомления"
+
+team_member -[hidden]-> system01
+team_member  -[hidden]-> system
+
+
+
+@enduml
