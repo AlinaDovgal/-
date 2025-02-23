@@ -1,0 +1,133 @@
+@startuml
+
+entity Users {
+    + id : GUID [PK]
+    + email : VARCHAR
+    + role : INT
+    - password : VARCHAR
+    + created_at : TIMESTAMP
+}
+
+entity Profiles {
+    + id : GUID [PK]
+    + user_id : GUID [FK]
+    + first_name : VARCHAR
+    + last_name : VARCHAR
+    + photo_url : VARCHAR
+    + organization : VARCHAR
+    + position : VARCHAR
+    + department : VARCHAR
+    - phone : VARCHAR
+    + city : VARCHAR
+    + timezone : VARCHAR
+    + skills : TEXT
+    + notification_format : INT
+    + created_at : TIMESTAMP
+    + updated_at : TIMESTAMP
+}
+
+entity Projects {
+    + id : GUID [PK]
+    + name : VARCHAR
+    + description : TEXT
+    + manager_id : GUID [FK]
+    + start_date : TIMESTAMP
+    + end_date : TIMESTAMP
+    + status : VARCHAR
+    + created_at : TIMESTAMP
+    + updated_at : TIMESTAMP
+}
+
+entity UsersProjects {
+    + id : GUID [PK]
+    + user_id : GUID [FK]
+    + project_id : GUID [FK]
+    + role : VARCHAR
+    + date_added : TIMESTAMP
+}
+
+entity Tasks {
+    + id : GUID [PK]
+    + project_id : GUID [FK]
+    + name : VARCHAR
+    + description : TEXT
+    + priority : INT
+    + status : VARCHAR
+    + due_date : TIMESTAMP
+    + created_by : GUID [FK]
+    + user_id : GUID [FK]
+    + created_at : TIMESTAMP
+    + updated_at : TIMESTAMP
+}
+
+entity Files {
+    + id : GUID [PK]
+    + user_id : GUID [FK]
+    + task_id : GUID [FK]
+    + project_id : GUID [FK]
+    + file_url : VARCHAR
+    + category_file : VARCHAR
+    + version : INT
+    + created_at : TIMESTAMP
+}
+
+entity Events {
+    + id : GUID [PK]
+    + title : VARCHAR
+    + description : TEXT
+    + start_time : TIMESTAMP
+    + end_time : TIMESTAMP
+    + project_id : GUID [FK]
+    + user_id : GUID [FK]
+}
+
+entity Messages {
+    + id : GUID [PK]
+    + user_id : GUID [FK]
+    + project_id : GUID [FK]
+    + task_id : GUID [FK]
+    + message_text : TEXT
+    + created_at : TIMESTAMP
+}
+
+entity VideoCalls {
+    + id : GUID [PK]
+    + user_id : GUID [FK]
+    + project_id : GUID [FK]
+    + duration : INT
+    + created_at : TIMESTAMP
+}
+
+entity VideoCallParticipants {
+    + id : GUID [PK]
+    + call_id : GUID [FK]
+    + user_id : GUID [FK]
+    + joined_at : TIMESTAMP
+    + left_at : TIMESTAMP
+}
+
+' Определение связей
+skinparam linetype ortho
+Users ||--o{ Profiles
+Users ||--o{ Projects 
+Users ||--o{ Tasks 
+Users ||--o{ Messages 
+Users ||--o{ VideoCalls 
+Users ||--o{ UsersProjects 
+Users ||--o{ VideoCallParticipants
+
+Profiles ||--|| Users
+
+Projects ||--o{ Tasks
+Projects ||--o{ Files
+Projects ||--o{ Events 
+Projects ||--o{ Messages
+Projects ||--o{ VideoCalls 
+Projects ||--o{ UsersProjects
+
+Tasks ||--o{ Files 
+Tasks ||--o{ Messages 
+
+VideoCalls ||--o{ VideoCallParticipants
+
+@enduml
