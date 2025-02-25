@@ -1,37 +1,55 @@
 @startuml
 !include <C4/C4_Container>
 
+Person(manager, "Менеджер проекта", "Создаёт проекты, управляет задачами и участниками")
+Person(team_member, "Участник команды", "Выполняет задачи, участвует в обсуждениях")
 
-Person(manager, "Менеджер проекта")
-Person(team_member, "Участник команды")
-System_Ext(notifications, "Система уведомлений", "Регистрация и вход через Google-аккаунт")
-System_Ext(google, "Сервисы Google", "Синхронизация событий и встреч, хранение документов и файлов")
+System_Ext(notifications, "Система уведомлений", "Отправка уведомлений пользователям")
+System_Ext(google, "Сервисы Google", "Синхронизация событий, встреч, хранение документов и файлов")
 
 System_Boundary(system, "Система управления проектами") {
-    Container(communications, "Модуль для коммуникаций", "Python, Django", "Взаимодействие между командой")
-    Container(registration, "Модуль регистрации", "Python, Django", "Регистрация и создание профиля")
-    Container(project, "Модуль управления проектами и задачами", "Python, Django", "Создание проектов и задач")
-    ContainerDb(database, "База данных", "PostgreSQL", "Хранит данные о проектах, задачах и пользователях")
+    Container(project_module, "Модуль управления проектами", "Python, Django", "Создание и управление проектами и задачами")
+    Container(user_module, "Модуль управления пользователями", "Python, Django", "Регистрация, авторизация, управление профилем")
+    Container(communication_module, "Модуль для коммуникаций", "Python, Django", "Обсуждения, обмен файлами, события")
+    ContainerDb(user_db, "БД пользователей", "PostgreSQL", "Хранит данные о пользователях")
+    ContainerDb(task_db, "БД проектов и задач", "PostgreSQL", "Хранит данные о проектах и задачах")
+    ContainerDb(comm_db, "БД коммуникаций", "PostgreSQL", "Хранит сообщения, события")
+    Container(event_bus, "Шина событий", "Kafka, RabbitMQ", "Асинхронное взаимодействие между сервисами")
 
-    manager -> registration : "Регистрация и создание профиля"
-    team_member -> registration : "Регистрация и создание профиля"
-    manager -> communications : "Взаимодействие с командой"
-    team_member -> communications : "Взаимодействие с командой"
-    manager -> project : "Создание и управление проектом"
-    
-    registration -> database : "Читает и записывает данные"
-    communications -> database : "Читает и записывает данные"
-    project -> database : "Читает и записывает данные"
-    communications -> notifications : "Отправка уведомлений"
-    communications -> google : "Синхронизация событий и файлов"
+    manager -> user_module : "Регистрация, управление профилем"
+    team_member -> user_module : "Регистрация, управление профилем"
+    manager -> project_module : "Создание и управление проектами"
+    team_member -> project_module : "Работа с задачами"
+    manager -> communication_module : "Взаимодействие с командой"
+    team_member -> communication_module : "Взаимодействие с командой"
 
-communications -[hidden]-> database
-registration -[hidden]-> database
-project -[hidden]-> database
-google -[hidden]-> system
-manager -[hidden]-> system
-team_member -[hidden]-> system
-notifications  -[hidden]-> system
+    project_module -> task_db : "Читает и записывает данные"
+    user_module -> user_db : "Читает и записывает данные"
+    communication_module -> comm_db : "Читает и записывает данные"
 
+    project_module -> event_bus : "Отправляет информацию по задачам"
+    communication_module -> event_bus : "Отправляет информацию по событиям"
+    user_module -> event_bus : "Отправляет информацию о пользователях"
+
+    event_bus -> notifications : "Отправка уведомлений"
+    event_bus -> google : "Синхронизация событий и файлов"
+
+    google -> project_module : "Синхронизация данных проектов"
+    google -> communication_module : "Синхронизация событий"
+    google -> user_module : "Вход через Google-аккаунт"
+
+    notifications -> manager : "Получает уведомления"
+    notifications -> team_member : "Получает уведомления"
+
+    user_module -[hidden]-> user_db
+    project_module-[hidden]-> task_db
+    communication_module -[hidden]-> comm_db
+     manager -[hidden]-> notifications
+    manager -[hidden]-> system
+    team_member -[hidden]-> system
+    notifications -[hidden]-> system
+    task_db -[hidden]-> event_bus
+    user_db -[hidden]-> event_bus
+    comm_db -[hidden]-> event_bus
 }
 @enduml
