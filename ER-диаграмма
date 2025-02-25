@@ -106,8 +106,6 @@ entity VideoCallParticipants {
     + left_at : TIMESTAMP
 }
 
-' Определение связей
-skinparam linetype ortho
 Users ||--o{ Profiles
 Users ||--o{ Projects 
 Users ||--o{ Tasks 
@@ -115,8 +113,8 @@ Users ||--o{ Messages
 Users ||--o{ VideoCalls 
 Users ||--o{ UsersProjects 
 Users ||--o{ VideoCallParticipants
-
-Profiles ||--|| Users
+Users ||--o{ Files
+Users ||--o{ Events
 
 Projects ||--o{ Tasks
 Projects ||--o{ Files
