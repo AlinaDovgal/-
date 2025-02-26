@@ -14,7 +14,7 @@ System_Boundary(system, "Система управления проектами"
     ContainerDb(user_db, "БД пользователей", "PostgreSQL", "Хранит данные о пользователях")
     ContainerDb(task_db, "БД проектов и задач", "PostgreSQL", "Хранит данные о проектах и задачах")
     ContainerDb(comm_db, "БД коммуникаций", "PostgreSQL", "Хранит сообщения, события")
-    Container(event_bus, "Шина событий", "Kafka, RabbitMQ", "Асинхронное взаимодействие между сервисами")
+    Container(event_bus, "Шина событий", "RabbitMQ", "Асинхронное взаимодействие между сервисами")
 
     manager -> user_module : "Регистрация, управление профилем"
     team_member -> user_module : "Регистрация, управление профилем"
