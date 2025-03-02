@@ -84,7 +84,6 @@ entity Events {
 entity Messages {
     + id : GUID [PK]
     + user_id : GUID [FK]
-    + project_id : GUID [FK]
     + task_id : GUID [FK]
     + message_text : TEXT
     + created_at : TIMESTAMP
@@ -119,7 +118,6 @@ Users ||--o{ Events
 Projects ||--o{ Tasks
 Projects ||--o{ Files
 Projects ||--o{ Events 
-Projects ||--o{ Messages
 Projects ||--o{ VideoCalls 
 Projects ||--o{ UsersProjects
 
